@@ -1,0 +1,31 @@
+
+services:
+    benefit_wallet_database:
+        image: postgres
+        container_name: benefit_wallet_database
+        restart: always
+        ports:
+            - 5432:5432
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=benefit_wallet_db
+        volumes:
+            - pgdata:/data/postgres
+
+    app:
+        build: .
+        container_name: benefit_wallet_api
+        restart: always
+        ports:
+            - 9000:9000
+        volumes:
+            - .:/usr/app
+        links:
+            - benefit_wallet_database
+        depends_on:
+            - benefit_wallet_database
+
+volumes:
+    pgdata:
+        driver: local

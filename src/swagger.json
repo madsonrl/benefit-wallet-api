@@ -1,0 +1,277 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Benefit Wallet API",
+        "description": "This is an API",
+        "version": "1.0.0",
+        "contact": {
+            "email": "madsonlemos.es@gmail.com"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:9000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/accounts": {
+            "get": {
+                "summary": "Retrieve accounts",
+                "description": "Fetch all accounts",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create an account",
+                "description": "Add a new account",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "clientName": {
+                                        "type": "string"
+                                    },
+                                    "foodBalance": {
+                                        "type": "number"
+                                    },
+                                    "mealBalance": {
+                                        "type": "number"
+                                    },
+                                    "cashBalance": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["clientName", "foodBalance", "mealBalance", "cashBalance"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account created successfully"
+                    }
+                }
+            }
+        },
+        "/accounts/update": {
+            "put": {
+                "summary": "Update an account",
+                "description": "Modify an existing account",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "cashBalance": {
+                                        "type": "number"
+                                    },
+                                    "foodBalance": {
+                                        "type": "number"
+                                    },
+                                    "mealBalance": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["id"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account updated successfully"
+                    }
+                }
+            }
+        },
+        "/accounts/delete": {
+            "delete": {
+                "summary": "Delete an account",
+                "description": "Remove an account by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account deleted successfully"
+                    }
+                }
+            }
+        },
+        "/merchants": {
+            "get": {
+                "summary": "Retrieve merchants",
+                "description": "Fetch all merchants",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a merchant",
+                "description": "Add a new merchant",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "merchantRegister": {
+                                        "type": "string"
+                                    },
+                                    "mcc": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["merchantRegister", "mcc"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Merchant created successfully"
+                    }
+                }
+            }
+        },
+        "/merchants/update": {
+            "put": {
+                "summary": "Update a merchant",
+                "description": "Modify an existing merchant",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "mcc": {
+                                        "type": "number"
+                                    }
+                                },
+                                "required": ["id"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Merchant updated successfully"
+                    }
+                }
+            }
+        },
+        "/merchants/delete": {
+            "delete": {
+                "summary": "Delete a merchant",
+                "description": "Remove a merchant by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Merchant deleted successfully"
+                    }
+                }
+            }
+        },
+        "/transactions": {
+            "get": {
+                "summary": "Retrieve transactions",
+                "description": "Fetch all transactions",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a transaction",
+                "description": "New transaction",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "account": {
+                                        "type": "string"
+                                    },
+                                    "totalAmount": {
+                                        "type": "number"
+                                    },
+                                    "mcc": {
+                                        "type": "string"
+                                    },
+                                    "merchant": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["account", "totalAmount", "mcc", "merchant"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation -> Code 00: Approved - Code 51: insufficient balance - Code 07: Error processing operation"
+                    }
+                }
+            }
+        },
+        "/transactions/delete": {
+            "delete": {
+                "summary": "Delete a transaction",
+                "description": "Remove a transaction by ID",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction deleted successfully"
+                    }
+                }
+            }
+        }
+    }
+}
