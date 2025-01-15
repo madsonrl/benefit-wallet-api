@@ -15,12 +15,22 @@ class CreateMerchantUseCase {
         @inject("MerchantsRepository")
         private merchantsRepository: IMerchantRepository
     ) {}
+    
 
     async execute({
         merchantRegister,
         mcc,
     }: IRequest): Promise<void> {
         
+        const merchantAlreadyExists = await this.merchantsRepository.findOne({
+            merchantRegister,
+            mcc,
+        });
+
+        if (merchantAlreadyExists) {
+            throw new AppError("Merchant Already exists!");
+        }
+
         await this.merchantsRepository.create({
             merchantRegister,
             mcc,

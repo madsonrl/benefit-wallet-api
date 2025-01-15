@@ -5,6 +5,19 @@ import { ICreateMerchantDTO } from "@modules/merchant/dtos/ICreateMerchantDTO";
 class MerchantsRepositoryInMemory implements IMerchantRepository {
     merchants: Merchant[] = [];
 
+    async findOne({
+        merchantRegister,
+        mcc,
+    }: Partial<Merchant>): Promise<Merchant | undefined> {
+        const merchant = this.merchants.find(
+            (merchant) =>
+                merchant.merchantRegister === merchantRegister &&
+                merchant.mcc === mcc
+        );
+    
+        return merchant;
+    }
+
     async findByName(clientName: string): Promise<Merchant> {
         const merchant = this.merchants.find(
             (merchant) => merchant.merchantRegister === clientName

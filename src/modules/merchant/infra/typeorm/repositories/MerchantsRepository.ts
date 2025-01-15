@@ -4,6 +4,7 @@ import { IMerchantRepository } from "@modules/merchant/repositories/IMerchantsRe
 import { ICreateMerchantDTO } from "@modules/merchant/dtos/ICreateMerchantDTO";
 import { Merchant } from "../entities/Merchant";
 import { AppError } from "@shared/errors/AppError";
+import { ICreateAccountDTO } from "@modules/account/dtos/ICreateAccountDTO";
 
 class MerchantsRepository implements IMerchantRepository {
     private repository: Repository<Merchant>;
@@ -12,18 +13,13 @@ class MerchantsRepository implements IMerchantRepository {
         this.repository = getRepository(Merchant);
     }
 
-    async create({ merchantRegister, mcc }: ICreateMerchantDTO): Promise<void> {
+    async findOne({ merchantRegister, mcc }: Partial<Merchant>): Promise<Merchant | undefined> {
+        return await this.repository.findOne({
+            where: { merchantRegister, mcc },
+        });
+    }
 
-        const merchantAlreadyExistsByName =
-            await this.repository.findOne({merchantRegister});
-        
-        const merchantAlreadyExistsByMcc =
-            await this.repository.findOne({mcc});
-
-        if (merchantAlreadyExistsByName && merchantAlreadyExistsByMcc) {
-            throw new AppError("Merchant Already exists!");
-        }
-            
+    async create({ merchantRegister, mcc }: ICreateMerchantDTO): Promise<void> {            
         const merchant = this.repository.create({
             merchantRegister,
             mcc,

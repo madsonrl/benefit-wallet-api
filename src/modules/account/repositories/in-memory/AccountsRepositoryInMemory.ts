@@ -1,6 +1,7 @@
 import { Account } from "../../infra/typeorm/entities/Account";
 import { IAccountRepository } from "../IAccountsRepository";
 import { ICreateAccountDTO } from "@modules/account/dtos/ICreateAccountDTO";
+import { v4 as uuidv4 } from "uuid"
 
 class AccountsRepositoryInMemory implements IAccountRepository {
     accounts: Account[] = [];
@@ -21,6 +22,8 @@ class AccountsRepositoryInMemory implements IAccountRepository {
         cashBalance,
     }: ICreateAccountDTO): Promise<void> {
         const account = new Account();
+
+        account.id = uuidv4();
 
         Object.assign(account, {
             clientName,

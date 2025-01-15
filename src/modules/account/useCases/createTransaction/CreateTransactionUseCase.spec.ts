@@ -10,7 +10,7 @@ let accountsRepositoryInMemory: AccountsRepositoryInMemory;
 let merchantsRepositoryInMemory: MerchantsRepositoryInMemory;
 
 describe("CreateTransaction", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         transactionsRepositoryInMemory = new TransactionsRepositoryInMemory();
         accountsRepositoryInMemory = new AccountsRepositoryInMemory();
         merchantsRepositoryInMemory = new MerchantsRepositoryInMemory();
@@ -21,38 +21,93 @@ describe("CreateTransaction", () => {
             merchantsRepositoryInMemory
         );
 
-        // Criação de conta com saldos
-        accountsRepositoryInMemory.create({
-            id: "account",
+        await accountsRepositoryInMemory.create({
             clientName: "Client Name",
             foodBalance: 300,
             mealBalance: 200,
             cashBalance: 100,
         });
 
-        // Criação de comerciante com MCC
-        merchantsRepositoryInMemory.create({
-            id: "merchant",
+        await merchantsRepositoryInMemory.create({
             merchantRegister: "12345",
             mcc: "5412",
         });
     });
 
-    // it("Should be able to create a new transaction", async () => {
+    it("Should be able to create a new transaction", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",
+            totalAmount: 100,
+            mcc: "5412",
+            accountId: account.id,
+        });
+
+        expect(result.code).toBe("00");
+    });
+
+    it("Should approve the transaction when balance is sufficient and MCC is valid", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",
+            totalAmount: 100,
+            mcc: "5412",
+            accountId: account.id,
+        });
+    
+        expect(result.code).toBe("00");
+    });
+
+    it("Should reject the transaction if the category balance is insufficient", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",
+            totalAmount: 500,
+            mcc: "5412",       
+            accountId: account.id,
+        });
+    
+        expect(result.code).toBe("51");
+    });
+
+    it("Should reject the transaction if the CASH balance is insufficient", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
         
-    //     const result = await createTransactionUseCase.execute({
-    //         merchant: "12345",
-    //         totalAmount: 100,
-    //         mcc: "5412",
-    //         accountId: "account",
-    //     });
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",
+            totalAmount: 500,  
+            mcc: "5412",    
+            accountId: account.id,
+        });
+    
+        expect(result.code).toBe("51");
+    });
 
-    //     const code  = 0;
+    it("Should approve the transaction using CASH balance when other categories are insufficient", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
+    
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",  
+            totalAmount: 50,  
+            mcc: "9999",        
+            accountId: account.id,
+        });
+    
+        expect(result.code).toBe("00"); 
+    });
 
-    //     console.log(result)
-
-    //     expect(code).toBe(0); // Transação aprovada
-    // });
+    it("Should reject the transaction if the MCC is invalid and CASH balance is insufficient", async () => {
+        const account = accountsRepositoryInMemory.accounts[0];
+        
+        const result = await createTransactionUseCase.execute({
+            merchant: "12345",
+            totalAmount: 500,  
+            mcc: "9999",       
+            accountId: account.id,
+        });
+    
+        expect(result.code).toBe("51");
+    });
 
     
 });
