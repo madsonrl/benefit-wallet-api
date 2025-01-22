@@ -32,21 +32,12 @@ class CreateTransactionUseCase {
         accountId,
     }: IRequest): Promise<{ code: string }> {
         try {
-
-            if (!accountId) {
-                return { code: "07" }; // account id não informado
+            if (!merchant || !totalAmount || !mcc || !accountId) {
+                return { code: "07" }; // algum item do payload  não informado
             }
 
-            if (!totalAmount || totalAmount < 0) {
-                return { code: "07" }; // valor da transação não informado ou negativo
-            }
-
-            if (!merchant) {
-                return { code: "07" }; // merchant não informado
-            }
-
-            if (!mcc) {
-                return { code: "07" }; // mcc não informado
+            if (totalAmount < 0) {
+                return { code: "07" }; // valor da transação negativo
             }
 
             const account = await this.accountsRepository.findByID(accountId);
@@ -63,7 +54,7 @@ class CreateTransactionUseCase {
 
             // Determinar categorias com base nos MCCs
             const merchantCategory = getCategoryFromTransaction(finalMcc);
-            
+
             const transactionCategory = getCategoryFromTransaction(mcc);
 
             // Tentar debitar da categoria do MCC do comerciante
